@@ -3,6 +3,7 @@ const express = require('express');
 const productsRouter = require('./routes/products');
 const ordersRouter = require('./routes/orders');
 const usersRouter = require('./routes/users');
+const featuresRouter = require('./routes/features');
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -15,6 +16,7 @@ app.get('/health', (req, res) => {
 });
 
 // Routes
+app.use('/api/features', featuresRouter);
 app.use('/api/products', productsRouter);
 app.use('/api/orders', ordersRouter);
 app.use('/api/users', usersRouter);

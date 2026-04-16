@@ -1,10 +1,22 @@
 const express = require('express');
 const router = express.Router();
 const orders = require('../data/orders');
+const products = require('../data/products');
+
+const FEATURE_V2_ORDERS = process.env.FEATURE_V2_ORDERS === 'true';
+
+function enrichOrder(order) {
+  const total = order.productIds.reduce((sum, pid) => {
+    const product = products.find(p => p.id === pid);
+    return sum + (product ? product.price : 0);
+  }, 0);
+  return { ...order, total: parseFloat(total.toFixed(2)) };
+}
 
 // GET /api/orders
 router.get('/', (req, res) => {
-  res.json(orders);
+  const data = FEATURE_V2_ORDERS ? orders.map(enrichOrder) : orders;
+  res.json(data);
 });
 
 // GET /api/orders/:id
