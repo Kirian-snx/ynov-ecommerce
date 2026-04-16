@@ -22,6 +22,18 @@ jobs:
 
       - run: npm ci
 
+      - name: CI log
+        run: |
+          echo "CI déclenchée le $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
+          echo "Branch: ${GITHUB_REF_NAME}"
+          echo "Commit: ${GITHUB_SHA}"
+          node -v
+          npm -v
+
+      - name: Smoke test
+        run: |
+          node -e "require('assert').ok(true, 'Smoke test KO'); console.log('Smoke test OK')"
+
       - name: Release
         uses: cycjimmy/semantic-release-action@v4
         env:
