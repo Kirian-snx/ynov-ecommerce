@@ -12,6 +12,7 @@ router.get('/', (req, res) => {
   }
 });
 
+
 // GET /api/users/:id
 router.get('/:id', (req, res) => {
   const id = parseInt(req.params.id);
