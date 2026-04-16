@@ -2,6 +2,8 @@ const express = require('express');
 const router = express.Router();
 const users = require('../data/users');
 
+const FEATURE_V2_E = process.env.FEATURE_V2_E === 'true';
+
 // GET /api/users
 router.get('/', (req, res) => {
   res.json(users);
@@ -30,7 +32,7 @@ router.post('/', (req, res) => {
     role: 'customer',
   };
   users.push(newUser);
-  res.status(201).json(newUser);
+  res.status(FEATURE_V2_E ? 201 : 202 ).json(newUser);
 });
 
 module.exports = router;
