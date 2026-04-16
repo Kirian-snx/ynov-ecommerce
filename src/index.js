@@ -27,5 +27,4 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`ecommerce-api running on http://localhost:${PORT}`);
 });
