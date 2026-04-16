@@ -3,13 +3,29 @@ const router = express.Router();
 const products = require('../data/products');
 
 const FEATURE_V2_PRODUCTS = process.env.FEATURE_V2_PRODUCTS === 'true';
+const BONNE_CHANCE = process.env.BONNE_CHANCE === 'true';
+const DRAMA_ENABLED = FEATURE_V2_PRODUCTS && BONNE_CHANCE;
+
+function withDrama(product) {
+  console.log("drama");
+  if (!DRAMA_ENABLED || product.stock > 0) {
+    return product;
+  }
+
+  return {
+    ...product,
+    drama: 'RUPTURE TOTALE, LE PEUPLE PANIQUE',
+  };
+}
 
 function getProductsV1() {
+  console.log("prodict1");
   return products;
 }
 
 function getProductsV2() {
-  return products.map(p => ({
+  console.log("prodict2");
+  return products.map(p => withDrama({
     ...p,
     available: p.stock > 0,
     priceFormatted: `€${p.price.toFixed(2)}`,
@@ -18,6 +34,7 @@ function getProductsV2() {
 
 // GET /api/products
 router.get('/', (req, res) => {
+  console.log(process.env.FEATURE_V2_PRODUCTS === 'true')
   const data = FEATURE_V2_PRODUCTS ? getProductsV2() : getProductsV1();
   res.json(data);
 });
