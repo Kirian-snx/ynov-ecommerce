@@ -1,3 +1,4 @@
+require('dotenv').config();
 const express = require('express');
 
 const productsRouter = require('./routes/products');
@@ -25,5 +26,4 @@ app.use((req, res) => {
 });
 
 app.listen(PORT, () => {
-  console.log(`ecommerce-api running on http://localhost:${PORT}`);
 });

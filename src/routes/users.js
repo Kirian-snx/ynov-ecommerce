@@ -2,9 +2,11 @@ const express = require('express');
 const router = express.Router();
 const users = require('../data/users');
 
+const FEATURE_V2_PRODUCTS = process.env.FEATURE_V2_PRODUCTS === 'true';
+
 // GET /api/users
 router.get('/', (req, res) => {
-  res.json(users);
+  return FEATURE_V2_PRODUCTS ? res.json({ message: '(❁´◡`❁)' }) : res.json(users);
 });
 
 // GET /api/users/:id
