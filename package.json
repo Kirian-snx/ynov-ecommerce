@@ -10,6 +10,7 @@
     "test": "jest --runInBand",
     "test:unit": "jest --runInBand tests/unit",
     "test:integration": "jest --runInBand tests/integration",
+    "test:coverage": "jest --runInBand --coverage",
     "prepare": "husky"
   },
   "keywords": [],
