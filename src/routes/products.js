@@ -1,16 +1,16 @@
 const express = require('express');
 const router = express.Router();
 const db = require('../db');
+const { formatV2 } = require('../utils/formatters');
 
 const FEATURE_V2_PRODUCTS = process.env.FEATURE_V2_PRODUCTS === 'true';
 
-function formatV2(p) {
-  return { ...p, available: p.stock > 0, priceFormatted: `€${p.price.toFixed(2)}` };
-}
-
-// GET /api/products
+// GET /api/products?category=<category>
 router.get('/', (req, res) => {
-  const rows = db.prepare('SELECT * FROM products').all();
+  const { category } = req.query;
+  const rows = category
+    ? db.prepare('SELECT * FROM products WHERE category = ?').all(category)
+    : db.prepare('SELECT * FROM products').all();
   res.json(FEATURE_V2_PRODUCTS ? rows.map(formatV2) : rows);
 });
 

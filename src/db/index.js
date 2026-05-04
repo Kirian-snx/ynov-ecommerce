@@ -1,9 +1,13 @@
 const Database = require('better-sqlite3');
 const path = require('path');
 
-const db = new Database(path.join(__dirname, 'ecommerce.db'));
+const dbPath = process.env.NODE_ENV === 'test'
+  ? ':memory:'
+  : path.join(__dirname, 'ecommerce.db');
 
-db.exec(`
+const db = new Database(dbPath);
+
+const SCHEMA = `
   CREATE TABLE IF NOT EXISTS products (
     id       INTEGER PRIMARY KEY,
     name     TEXT    NOT NULL,
@@ -35,6 +39,9 @@ db.exec(`
     FOREIGN KEY (orderId)   REFERENCES orders(id),
     FOREIGN KEY (productId) REFERENCES products(id)
   );
-`);
+`;
+
+db.exec(SCHEMA);
 
 module.exports = db;
+module.exports.SCHEMA = SCHEMA;
