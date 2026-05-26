@@ -3,17 +3,16 @@ pipeline {
 
   environment {
     NODE_ENV = 'test'
-    SONAR_TOKEN = credentials('sonar-token')
   }
 
   triggers {
-    pollSCM('H/5 * * * *')   // ou cron('H 2 * * *')
+    pollSCM('H/5 * * * *')
   }
 
   stages {
-    stage('Install')  { steps { sh 'npm ci' } }
-    stage('Lint')     { steps { sh 'npm run lint' } }
-    stage('Test')     {
+    stage('Install') { steps { sh 'npm ci' } }
+    stage('Lint')    { steps { sh 'npm run lint' } }
+    stage('Test') {
       steps {
         sh 'npm test -- --coverage'
       }
@@ -32,6 +31,6 @@ pipeline {
 
   post {
     success { echo '✅ Pipeline OK' }
-    failure { mail to: 'team@x.io', subject: "❌ ${env.JOB_NAME}" }
+    failure { echo "❌ ${env.JOB_NAME} a échoué" }
   }
 }
