@@ -1,36 +1,26 @@
-pipeline {
-  agent { docker { image 'node:20-alpine' } }
+node('docker') {
+  def services = ['api', 'worker', 'admin']
 
-  environment {
-    NODE_ENV = 'test'
-  }
+  stage('Checkout') { checkout scm }
 
-  triggers {
-    pollSCM('H/5 * * * *')
-  }
-
-  stages {
-    stage('Install') { steps { sh 'npm ci' } }
-    stage('Lint')    { steps { sh 'npm run lint' } }
-    stage('Test') {
-      steps {
-        sh 'npm test -- --coverage'
-      }
-      post {
-        always {
-          junit 'reports/junit.xml'
-          archiveArtifacts 'coverage/**'
+  // Boucle dynamique — impossible en déclaratif sans matrix
+  def parallelStages = [:]
+  services.each { svc ->
+    parallelStages[svc] = {
+      stage("Test ${svc}") {
+        dir(svc) {
+          sh 'npm ci && npm test'
         }
       }
     }
-    stage('Deploy') {
-      when { branch 'main' }
-      steps { sh './deploy.sh' }
-    }
   }
+  parallel parallelStages
 
-  post {
-    success { echo '✅ Pipeline OK' }
-    failure { echo "❌ ${env.JOB_NAME} a échoué" }
+  // Logique conditionnelle riche
+  if (env.BRANCH_NAME == 'main' && currentBuild.changeSets.size() > 0) {
+    stage('Release') {
+      def version = sh(returnStdout: true, script: 'git describe --tags').trim()
+      sh "./release.sh ${version}"
+    }
   }
 }
